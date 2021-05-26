@@ -1,0 +1,19 @@
+SELECT location_id,htn_status,count(p.patient_id) FROM patient p join flat_cdm_summary f on p.patient_id = f.patient_id group by location_id,htn_status;
+
+SELECT l.name,count(p.patient_id) as 'New Hypertensive' FROM patient p join flat_cdm_summary f on p.patient_id =
+f.patient_id join location l on l.id = f.location_id where htn_status = 7285 group by location_id,htn_status order by location_id;
+
+SELECT l.name,count(p.patient_id) as 'Known Hypertensive' FROM patient p join flat_cdm_summary f on p.patient_id =
+f.patient_id join location l on l.id = f.location_id where htn_status = 7286 group by location_id,htn_status order by location_id;
+
+SELECT l.name,count(p.patient_id) as 'New Diabetic' FROM patient p join flat_cdm_summary f on p.patient_id =
+f.patient_id join location l on l.id = f.location_id where dm_status = 7281 group by location_id,htn_status order by location_id;
+
+SELECT l.name,count(p.patient_id) as 'Known Diabetic' FROM patient p join flat_cdm_summary f on p.patient_id =
+f.patient_id join location l on l.id = f.location_id where dm_status = 7282 group by location_id,htn_status order by location_id;
+
+SELECT l.name,count(p.patient_id) as 'Hypertensive and Diabetic' FROM patient p join flat_cdm_summary f on p.patient_id =
+f.patient_id join location l on l.id = f.location_id where dm_status != NULL and htn_status != NULL group by location_id,htn_status order by location_id;
+
+SELECT p.name as PatinentName,encounter_datetime as 'Encounter Date',l.name as Location,IF(htn_status = 7285,'New','Known') as 'Hypertension Status',gender,YEAR(CURRENT_TIMESTAMP) - YEAR(dob) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(dob, 5)) as age from flat_cdm_summary f join patient p on p.patient_id = f.patient_id join location
+l on l.id = f.location_id where htn_status = 7285 or htn_status = 7286;
