@@ -94,6 +94,46 @@ app.get('/hppatientsreport',(req,res) => {
 	})
 })
 
+app.get('/khppatientsreport',(req,res) => {
+
+	const nh = "SELECT p.name as PatinentName,encounter_datetime,l.name as Location,IF(htn_status = 7285,'New','Known') as 'HypertensionStatus',gender,YEAR(CURRENT_TIMESTAMP) - YEAR(dob) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(dob, 5)) as age from flat_cdm_summary f join patient p on p.patient_id = f.patient_id join location l on l.id = f.location_id where htn_status = 7285 or htn_status = 7286 limit 20;";
+	db.query(nh,(err,result) => {
+		res.send(result)
+	})
+})
+
+app.get('/hppertensionreport/:location',(req,res) => {
+
+	const report = "SELECT p.name as PatinentName,encounter_datetime,l.name as Location,gender,YEAR(CURRENT_TIMESTAMP) - YEAR(dob) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(dob, 5)) as age from flat_cdm_summary f join patient p on p.patient_id = f.patient_id join location l on l.id = f.location_id where htn_status = 7285 and l.name = ?;";
+	db.query(report,req.params.location,(err,result) => {
+		res.send(result)
+	})
+})
+
+app.get('/knownhppertensionreport/:location',(req,res) => {
+
+	const report = "SELECT p.name as PatinentName,encounter_datetime,l.name as Location,gender,YEAR(CURRENT_TIMESTAMP) - YEAR(dob) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(dob, 5)) as age from flat_cdm_summary f join patient p on p.patient_id = f.patient_id join location l on l.id = f.location_id where htn_status = 7286 and l.name = ?;";
+	db.query(report,req.params.location,(err,result) => {
+		res.send(result)
+	})
+})
+
+app.get('/newdiabetic/:location',(req,res) => {
+
+	const report = "SELECT p.name as PatinentName,encounter_datetime,l.name as Location,gender,YEAR(CURRENT_TIMESTAMP) - YEAR(dob) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(dob, 5)) as age from flat_cdm_summary f join patient p on p.patient_id = f.patient_id join location l on l.id = f.location_id where dm_status = 7281 and l.name = ?;";
+	db.query(report,req.params.location,(err,result) => {
+		res.send(result)
+	})
+})
+
+app.get('/knowndiabetic/:location',(req,res) => {
+
+	const report = "SELECT p.name as PatinentName,encounter_datetime,l.name as Location,gender,YEAR(CURRENT_TIMESTAMP) - YEAR(dob) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(dob, 5)) as age from flat_cdm_summary f join patient p on p.patient_id = f.patient_id join location l on l.id = f.location_id where dm_status = 7282 and l.name = ?;";
+	db.query(report,req.params.location,(err,result) => {
+		res.send(result)
+	})
+})
+
 app.listen(PORT,() => {
 	console.log('RUNNING on ' + PORT)
 })
